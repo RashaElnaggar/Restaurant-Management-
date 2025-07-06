@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RestaurantService } from '../services/restaurant.service';
 import { Restaurant } from '../models/restaurant.model';
 
+
 @Component({
   selector: 'app-search-restaurants',
   standalone: true,
@@ -15,32 +16,57 @@ export class SearchRestaurantsComponent {
   selectedCityId: number = 0;
   searchPerformed: boolean = false;
 
-  cityName = '';
+  cityName: string = '';
+  restaurantName: string = '';
+
   restaurants: Restaurant[] = [];
   loading = false;
 
   constructor(private restaurantService: RestaurantService) {}
 
-  search() {
+  search():void {
   this.loading = true;
-  this.searchPerformed = false;
+  this.searchPerformed = true;
+    const trimmedCity = this.cityName.trim();
+  const trimmedRestaurant = this.restaurantName.trim();
 
-  this.restaurantService.getRestaurantsByCityName(this.cityName.trim()).subscribe({
-    next: (data) => {
+  if (trimmedCity){
+  this.restaurantService.getRestaurantsByCityName(trimmedCity).subscribe({
+    next: (data:Restaurant[]) => {
       console.log("🍽 Restaurants received:", data); // ✅ Check this
       this.restaurants = data;
       this.loading = false;
-      this.searchPerformed = true;
+      
     },
     error: (err) => {
       console.error('Error loading restaurants', err);
       this.restaurants = [];
       this.loading = false;
-      this.searchPerformed = true;
+      
     }
   });
 }
+  
+  else if (trimmedRestaurant) {
+    this.restaurantService.getRestaurantsByName(trimmedRestaurant).subscribe({
+      next: (data :Restaurant[]) => {
+        this.restaurants = data;
+        this.loading = false;
+     
 
 
+      },
+      error: () => {
+        this.restaurants = [];
+        this.loading = false;
+      }
+    });
+  } else {
+    this.loading = false;
+  }
+
+console.log(this.restaurants);
+
+}
 
 }

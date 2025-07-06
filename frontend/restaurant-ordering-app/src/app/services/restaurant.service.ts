@@ -22,5 +22,9 @@ getRestaurantsByCityName(cityName: string): Observable<Restaurant[]> {
   );
 }
 
+getRestaurantsByName(name: string): Observable<Restaurant[]> {
+  return this.http.get<Restaurant[]>(`https://localhost:7024/api/Restaurants/search?name=${name}`);
+}
+
   }
 
